@@ -1,10 +1,17 @@
 <!DOCTYPE html>
 <html>
 <head>
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
   <style>
-    body { margin: 0; background: #0d1117; font-family: -apple-system, sans-serif; }
+    body { 
+      margin: 0; 
+      background: #0d1117; 
+      font-family: -apple-system, BlinkMacSystemFont, sans-serif; 
+    }
     .container { padding: 30px; text-align: center; }
-    h3 { color: #c9d1d9; font-weight: 600; }
+    h3 { color: #c9d1d9; font-weight: 600; margin: 20px 0; }
     img { max-width: 100%; border-radius: 8px; }
     #ghchart { background: #161b22; padding: 15px; }
   </style>
@@ -13,25 +20,48 @@
   <div class="container">
     <div style="margin-bottom: 30px;">
       <h3>📊 Dio's Contribution Activity</h3>
-      <img id="ghchart">
+      <img id="ghchart" alt="GitHub Contribution Chart">
     </div>
     <div>
       <h3>🔥 revaldyhazza's Contribution Streak</h3>
-      <img id="ghstreak">
+      <img id="ghstreak" alt="GitHub Streak">
     </div>
   </div>
+  
   <script>
-    function updateImages() {
-      const t = new Date().getTime();
-      document.getElementById("ghchart").src = 
-        "https://ghchart.rshah.org/239a3b/revaldyhazza?t=" + t;
-      document.getElementById("ghstreak").src = 
-        "https://github-readme-streak-stats.herokuapp.com/?user=revaldyhazza&theme=dark&hide_border=true&background=161b22&stroke=30363d&ring=239a3b&fire=239a3b&currStreakLabel=58a6ff&sideLabels=c9d1d9&dates=8b949e&t=" + t;
+    function loadImages() {
+      // Gunakan random number + timestamp untuk force reload
+      const cacheBuster = Math.random().toString(36).substring(7) + '_' + Date.now();
+      
+      const chartImg = document.getElementById('ghchart');
+      const streakImg = document.getElementById('ghstreak');
+      
+      // Force reload dengan membuat Image object baru
+      const newChart = new Image();
+      newChart.onload = () => {
+        chartImg.src = newChart.src;
+      };
+      newChart.src = `https://ghchart.rshah.org/239a3b/revaldyhazza?cb=${cacheBuster}`;
+      
+      const newStreak = new Image();
+      newStreak.onload = () => {
+        streakImg.src = newStreak.src;
+      };
+      newStreak.src = `https://github-readme-streak-stats.herokuapp.com/?user=revaldyhazza&theme=dark&hide_border=true&background=161b22&stroke=30363d&ring=239a3b&fire=239a3b&currStreakLabel=58a6ff&sideLabels=c9d1d9&dates=8b949e&cb=${cacheBuster}`;
     }
     
-    updateImages();
-    // Auto refresh setiap 5 menit
-    setInterval(updateImages, 300000);
+    // Load pertama kali
+    loadImages();
+    
+    // Reload setiap 10 menit (600000 ms)
+    setInterval(loadImages, 600000);
+    
+    // Reload saat tab menjadi active lagi
+    document.addEventListener('visibilitychange', () => {
+      if (!document.hidden) {
+        loadImages();
+      }
+    });
   </script>
 </body>
 </html>
